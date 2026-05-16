@@ -4,6 +4,7 @@
 	<!-- Uygulamanın adı (Ana ekranda görünecek isim) -->
 	<meta name="apple-mobile-web-app-title" content="Maliyet Hesapla">
 	<link rel="apple-touch-icon" href="apple-touch-icon.png">
+	<link rel="manifest" href="manifest.json">
 	<!-- Tam ekran modu (Safari çubuklarını gizler) -->
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<!-- Üst barın rengini arka plana uydurur -->
@@ -251,6 +252,12 @@ function temizle() {
     document.getElementById('sonuc').innerText = '-';
 }
 </script>
- 
+ <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+      .then(() => console.log('Çevrimdışı mod aktif!'))
+      .catch((err) => console.log('Hata:', err));
+  }
+</script>
 </body>
 </html>
