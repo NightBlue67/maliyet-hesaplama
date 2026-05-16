@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+	<!-- Uygulamanın adı (Ana ekranda görünecek isim) -->
+	<meta name="apple-mobile-web-app-title" content="Maliyet Hesapla">
+	<!-- Tam ekran modu (Safari çubuklarını gizler) -->
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<!-- Üst barın rengini arka plana uydurur -->
+	<meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Üretim & Maliyet Hesaplayıcı</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            min-height: 100%;
+            background-color: #f5f5f7;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center; 
+            align-items: center;    
+            padding: 20px 0;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            width: 85%; 
+            max-width: 350px; 
+            box-sizing: border-box;
+        }
+        h2 {
+            text-align: center;
+            color: #1d1d1f;
+            margin-top: 0;
+            font-size: 20px;
+            border-bottom: 1px solid #d2d2d7;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #1d1d1f;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d2d2d7;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            background-color: #fbfbfd;
+        }
+        input:focus {
+            outline: none;
+            border-color: #0071e3;
+            background-color: white;
+        }
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        button {
+            flex: 2;
+            padding: 12px;
+            background-color: #0071e3;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #0077ed;
+        }
+        button.clear-btn {
+            flex: 1;
+            background-color: #e8e8ed;
+            color: #1d1d1f;
+        }
+        button.clear-btn:hover {
+            background-color: #d2d2d7;
+        }
+        .result-box {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f5f5f7;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #d2d2d7;
+        }
+        .result-label {
+            font-size: 14px;
+            color: #86868b;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .result-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #0071e3;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+ 
+<div class="container">
+    <h2>Üretim / Maliyet Hesaplayıcı</h2>
+    
+    <div class="input-group">
+        <label for="valA">GRAMAJ (Sadece Tam Sayı)</label>
+        <input type="text" id="valA" inputmode="numeric" placeholder="0" enterkeyhint="next" pattern="[0-9]*">
+    </div>
+    
+    <div class="input-group">
+        <label for="valB">EN (Örn: 22,2 veya 222,2)</label>
+        <input type="text" id="valB" inputmode="decimal" placeholder="0" enterkeyhint="next">
+    </div>
+    
+    <div class="input-group">
+        <label for="valC">BOY (Örn: 22,2 veya 222,2)</label>
+        <input type="text" id="valC" inputmode="decimal" placeholder="0" enterkeyhint="next">
+    </div>
+    
+    <div class="input-group">
+        <label for="valD">TABAKA (Otomatik Noktalamalı)</label>
+        <input type="text" id="valD" inputmode="numeric" placeholder="0" enterkeyhint="done" pattern="[0-9]*">
+    </div>
+    
+    <div class="button-group">
+        <button onclick="hesapla()">Hesapla</button>
+        <button class="clear-btn" onclick="temizle()">Temizle</button>
+    </div>
+    
+    <div class="result-box">
+        <div class="result-label">KG MİKTARI</div>
+        <div id="sonuc" class="result-value">-</div>
+    </div>
+</div>
+ 
+<script>
+// GRAMAJ (valA) filtresi
+const gramajInput = document.getElementById('valA');
+function temizleGramaj(val) {
+    let temiz = val.replace(/[^0-9]/g, '');
+    if (temiz.length > 3) temiz = temiz.slice(0, 3);
+    return temiz;
+}
+gramajInput.addEventListener('input', function() { this.value = temizleGramaj(this.value); });
+gramajInput.addEventListener('paste', function(e) {
+    e.preventDefault(); 
+    let pasteData = (e.clipboardData || window.clipboardData).getData('text'); 
+    this.value = temizleGramaj(pasteData);
+});
+ 
+// EN (valB) ve BOY (valC) filtresi
+function filtreleEnBoy(val) {
+    let temiz = val.replace(/[.,eE+\-]/g, ',');
+    temiz = temiz.replace(/[^0-9,]/g, '');
+    let parcalar = temiz.split(',');
+    if (parcalar.length > 2) {
+        temiz = parcalar[0] + ',' + parcalar.slice(1).join('');
+        parcalar = temiz.split(',');
+    }
+    let tamKisim = parcalar[0];
+    let ondalikKisim = parcalar[1];
+    if (tamKisim.length > 3) tamKisim = tamKisim.slice(0, 3);
+    if (parcalar.length > 1 && tamKisim.length < 2) return tamKisim; 
+    if (ondalikKisim !== undefined) return tamKisim + ',' + ondalikKisim;
+    return tamKisim;
+}
+
+const enInput = document.getElementById('valB');
+const boyInput = document.getElementById('valC');
+[enInput, boyInput].forEach(input => {
+   input.addEventListener('input', function() { this.value = filtreleEnBoy(this.value); });
+   input.addEventListener('paste', function(e) {
+        e.preventDefault();
+        let pasteData = (e.clipboardData || window.clipboardData).getData('text');
+        this.value = filtreleEnBoy(pasteData);
+    });
+});
+ 
+// TABAKA (valD) için Otomatik Binlik Ayırıcı
+const tabakaInput = document.getElementById('valD');
+function formatlaTabaka(val) {
+    let sadeceSayi = val.replace(/[^0-9]/g, '');
+    if (!sadeceSayi) return '';
+    return new Intl.NumberFormat('tr-TR').format(parseInt(sadeceSayi, 10));
+}
+tabakaInput.addEventListener('input', function() { this.value = formatlaTabaka(this.value); });
+tabakaInput.addEventListener('paste', function(e) {
+   e.preventDefault();
+   let pasteData = (e.clipboardData || window.clipboardData).getData('text');
+   this.value = formatlaTabaka(pasteData);
+});
+ 
+// Klavye akış yönetimi
+document.getElementById('valA').addEventListener('keydown', function(e) { if(e.key === 'Enter') { e.preventDefault(); document.getElementById('valB').focus(); } });
+document.getElementById('valB').addEventListener('keydown', function(e) { if(e.key === 'Enter') { e.preventDefault(); document.getElementById('valC').focus(); } });
+document.getElementById('valC').addEventListener('keydown', function(e) { if(e.key === 'Enter') { e.preventDefault(); document.getElementById('valD').focus(); } });
+document.getElementById('valD').addEventListener('keydown', function(e) { if(e.key === 'Enter') { e.preventDefault(); hesapla(); document.getElementById('valD').blur(); } });
+ 
+function hesapla() {
+    let a = parseFloat(document.getElementById('valA').value) || 0;
+    let b = parseFloat(document.getElementById('valB').value.replace(',', '.')) || 0;
+    let c = parseFloat(document.getElementById('valC').value.replace(',', '.')) || 0;
+    let d = parseFloat(document.getElementById('valD').value.replace(/\./g, '')) || 0;
+    
+    // Düzenlenen tek paydalı formül yapısı (Sonuç birebir aynıdır)
+    let hamSonuc = (a * b * c * d) / 10000000;
+    
+    let tamKisim = Math.floor(hamSonuc);
+    let kusurat = hamSonuc - tamKisim;
+    
+    let finalSonuc;
+    
+    // Özel yuvarlama mantığınız (Değiştirilmedi)
+    if (kusurat >= 0.10) {
+        finalSonuc = Math.ceil(hamSonuc);
+    } else {
+        finalSonuc = Math.floor(hamSonuc);
+    }
+    
+    let formatliFinal = new Intl.NumberFormat('tr-TR').format(finalSonuc);
+    document.getElementById('sonuc').innerText = formatliFinal + " kg";
+}
+ 
+function temizle() {
+    document.getElementById('valA').value = '';
+    document.getElementById('valB').value = '';
+    document.getElementById('valC').value = '';
+    document.getElementById('valD').value = '';
+    document.getElementById('sonuc').innerText = '-';
+}
+</script>
+ 
+</body>
+</html>
