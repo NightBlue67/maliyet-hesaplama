@@ -124,22 +124,22 @@
     
     <div class="input-group">
         <label for="valA">GRAMAJ (Sadece Tam Sayı)</label>
-        <input type="text" id="valA" inputmode="numeric" placeholder="0" enterkeyhint="next" pattern="[0-9]*" onfocus="this.select()">
+        <input type="text" id="valA" inputmode="numeric" pattern="[0-9]*" placeholder="0" onfocus="this.select()">
     </div>
     
     <div class="input-group">
         <label for="valB">EN (Örn: 22,2 veya 222,2)</label>
-        <input type="text" id="valB" inputmode="decimal" placeholder="0" enterkeyhint="next" onfocus="this.select()">
+        <input type="text" id="valB" inputmode="decimal" pattern="[0-9.,]*" placeholder="0" onfocus="this.select()">
     </div>
     
     <div class="input-group">
         <label for="valC">BOY (Örn: 22,2 veya 222,2)</label>
-        <input type="text" id="valC" inputmode="decimal" placeholder="0" enterkeyhint="next" onfocus="this.select()">
+        <input type="text" id="valC" inputmode="decimal" pattern="[0-9.,]*" placeholder="0" onfocus="this.select()">
     </div>
     
     <div class="input-group">
         <label for="valD">TABAKA (Otomatik Noktalamalı)</label>
-        <input type="text" id="valD" inputmode="numeric" placeholder="0" enterkeyhint="done" pattern="[0-9]*" onfocus="this.select()">
+        <input type="text" id="valD" inputmode="numeric" pattern="[0-9]*" placeholder="0" onfocus="this.select()">
     </div>
     
     <div class="button-group">
@@ -154,21 +154,25 @@
 </div>
  
 <script>
-// GRAMAJ (valA) filtresi
+// GRAMAJ (valA) filtresi ve anlık hesaplama
 const gramajInput = document.getElementById('valA');
 function temizleGramaj(val) {
     let temiz = val.replace(/[^0-9]/g, '');
     if (temiz.length > 3) temiz = temiz.slice(0, 3);
     return temiz;
 }
-gramajInput.addEventListener('input', function() { this.value = temizleGramaj(this.value); });
+gramajInput.addEventListener('input', function() { 
+    this.value = temizleGramaj(this.value); 
+    hesapla();
+});
 gramajInput.addEventListener('paste', function(e) {
     e.preventDefault(); 
     let pasteData = (e.clipboardData || window.clipboardData).getData('text'); 
     this.value = temizleGramaj(pasteData);
+    hesapla();
 });
  
-// EN (valB) ve BOY (valC) filtresi
+// EN (valB) ve BOY (valC) filtresi ve anlık hesaplama
 function filtreleEnBoy(val) {
     let temiz = val.replace(/[.,eE+\-]/g, ',');
     temiz = temiz.replace(/[^0-9,]/g, '');
@@ -188,29 +192,37 @@ function filtreleEnBoy(val) {
 const enInput = document.getElementById('valB');
 const boyInput = document.getElementById('valC');
 [enInput, boyInput].forEach(input => {
-   input.addEventListener('input', function() { this.value = filtreleEnBoy(this.value); });
+   input.addEventListener('input', function() { 
+        this.value = filtreleEnBoy(this.value); 
+        hesapla();
+   });
    input.addEventListener('paste', function(e) {
         e.preventDefault();
         let pasteData = (e.clipboardData || window.clipboardData).getData('text');
         this.value = filtreleEnBoy(pasteData);
+        hesapla();
     });
 });
  
-// TABAKA (valD) için Otomatik Binlik Ayırıcı
+// TABAKA (valD) için Otomatik Binlik Ayırıcı ve anlık hesaplama
 const tabakaInput = document.getElementById('valD');
 function formatlaTabaka(val) {
     let sadeceSayi = val.replace(/[^0-9]/g, '');
     if (!sadeceSayi) return '';
     return new Intl.NumberFormat('tr-TR').format(parseInt(sadeceSayi, 10));
 }
-tabakaInput.addEventListener('input', function() { this.value = formatlaTabaka(this.value); });
+tabakaInput.addEventListener('input', function() { 
+    this.value = formatlaTabaka(this.value); 
+    hesapla();
+});
 tabakaInput.addEventListener('paste', function(e) {
    e.preventDefault();
    let pasteData = (e.clipboardData || window.clipboardData).getData('text');
    this.value = formatlaTabaka(pasteData);
+   hesapla();
 });
  
-// Klavye akış yönetimi
+// Klavye akış yönetimi (PC ve destekleyen cihazlarda Enter tuşu işlevleri)
 document.getElementById('valA').addEventListener('keydown', function(e) { if(e.key === 'Enter') { e.preventDefault(); document.getElementById('valB').focus(); } });
 document.getElementById('valB').addEventListener('keydown', function(e) { if(e.key === 'Enter') { e.preventDefault(); document.getElementById('valC').focus(); } });
 document.getElementById('valC').addEventListener('keydown', function(e) { if(e.key === 'Enter') { e.preventDefault(); document.getElementById('valD').focus(); } });
@@ -222,7 +234,6 @@ function hesapla() {
     let c = parseFloat(document.getElementById('valC').value.replace(',', '.')) || 0;
     let d = parseFloat(document.getElementById('valD').value.replace(/\./g, '')) || 0;
     
-    // Düzenlenen tek paydalı formül yapısı (Sonuç birebir aynıdır)
     let hamSonuc = (a * b * c * d) / 10000000;
     
     let tamKisim = Math.floor(hamSonuc);
@@ -230,7 +241,6 @@ function hesapla() {
     
     let finalSonuc;
     
-    // Özel yuvarlama mantığınız (Değiştirilmedi)
     if (kusurat >= 0.10) {
         finalSonuc = Math.ceil(hamSonuc);
     } else {
