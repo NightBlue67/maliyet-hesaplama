@@ -122,31 +122,29 @@
 <div class="container">
     <h2>Üretim / Maliyet Hesaplayıcı</h2>
     
-    <form id="calcForm" onsubmit="event.preventDefault();" autocomplete="off">
-        <div class="input-group">
-            <label for="valA">GRAMAJ (Sadece Tam Sayı)</label>
-            <input type="text" id="valA" inputmode="numeric" pattern="[0-9]*" placeholder="0" autocomplete="off" onfocus="this.select()">
-        </div>
-        
-        <div class="input-group">
-            <label for="valB">EN (Örn: 22,2 veya 222,2)</label>
-            <input type="text" id="valB" inputmode="decimal" pattern="[0-9.,]*" placeholder="0" autocomplete="off" onfocus="this.select()">
-        </div>
-        
-        <div class="input-group">
-            <label for="valC">BOY (Örn: 22,2 veya 222,2)</label>
-            <input type="text" id="valC" inputmode="decimal" pattern="[0-9.,]*" placeholder="0" autocomplete="off" onfocus="this.select()">
-        </div>
-        
-        <div class="input-group">
-            <label for="valD">TABAKA (Otomatik Noktalamalı)</label>
-            <input type="text" id="valD" inputmode="numeric" pattern="[0-9]*" placeholder="0" autocomplete="off" onfocus="this.select()">
-        </div>
-    </form>
+    <div class="input-group">
+        <label for="valA">GRAMAJ (Sadece Tam Sayı)</label>
+        <input type="text" id="valA" name="kutu_grm" tabindex="1" inputmode="numeric" pattern="[0-9]*" placeholder="0" autocomplete="nope" onfocus="this.select()">
+    </div>
+    
+    <div class="input-group">
+        <label for="valB">EN (Örn: 22,2 veya 222,2)</label>
+        <input type="text" id="valB" name="kutu_en" tabindex="2" inputmode="decimal" pattern="[0-9.,]*" placeholder="0" autocomplete="nope" onfocus="this.select()">
+    </div>
+    
+    <div class="input-group">
+        <label for="valC">BOY (Örn: 22,2 veya 222,2)</label>
+        <input type="text" id="valC" name="kutu_by" tabindex="3" inputmode="decimal" pattern="[0-9.,]*" placeholder="0" autocomplete="nope" onfocus="this.select()">
+    </div>
+    
+    <div class="input-group">
+        <label for="valD">TABAKA (Otomatik Noktalamalı)</label>
+        <input type="text" id="valD" name="kutu_tbk" tabindex="4" inputmode="numeric" pattern="[0-9]*" placeholder="0" autocomplete="nope" onfocus="this.select()">
+    </div>
     
     <div class="button-group">
-        <button onclick="hesapla()">Hesapla</button>
-        <button class="clear-btn" onclick="temizle()">Temizle</button>
+        <button onclick="hesapla()" tabindex="5">Hesapla</button>
+        <button class="clear-btn" onclick="temizle()" tabindex="6">Temizle</button>
     </div>
     
     <div class="result-box">
@@ -224,7 +222,7 @@ tabakaInput.addEventListener('paste', function(e) {
    hesapla();
 });
  
-// PC İÇİN ENTER AKIŞ YÖNETİMİ (PC klavyelerinde çalışmaya devam eder)
+// PC İÇİN ENTER AKIŞ YÖNETİMİ
 document.getElementById('valA').addEventListener('keydown', function(e) { if(e.key === 'Enter') { e.preventDefault(); document.getElementById('valB').focus(); } });
 document.getElementById('valB').addEventListener('keydown', function(e) { if(e.key === 'Enter') { e.preventDefault(); document.getElementById('valC').focus(); } });
 document.getElementById('valC').addEventListener('keydown', function(e) { if(e.key === 'Enter') { e.preventDefault(); document.getElementById('valD').focus(); } });
