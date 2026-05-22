@@ -1,126 +1,152 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="tr" data-theme="light">
 <head>
-	<meta name="apple-mobile-web-app-title" content="Maliyet Hesapla">
+	<meta name="apple-mobile-web-app-title" content="Karton Kilo">
 	<link rel="apple-touch-icon" href="apple-touch-icon.png">
 	<link rel="manifest" href="manifest.json">
 	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Üretim & Maliyet Hesaplayıcı</title>
+    <title>Karton Kilogram Hesaplayıcı</title>
     <style>
+        :root {
+            --bg-color: #f5f5f7;
+            --container-bg: #ffffff;
+            --text-main: #1d1d1f;
+            --text-muted: #86868b;
+            --input-bg: #fbfbfd;
+            --border-color: #d2d2d7;
+            --primary: #0071e3;
+            --primary-hover: #0077ed;
+            --btn-secondary: #e8e8ed;
+            --btn-secondary-hover: #d2d2d7;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #1c1c1e;
+            --container-bg: #2c2c2e;
+            --text-main: #f5f5f7;
+            --text-muted: #a1a1a6;
+            --input-bg: #3a3a3c;
+            --border-color: #48484a;
+            --primary: #0a84ff;
+            --primary-hover: #409cff;
+            --btn-secondary: #48484a;
+            --btn-secondary-hover: #636366;
+        }
+
         html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            min-height: 100%;
-            background-color: #f5f5f7;
+            margin: 0; padding: 0; width: 100%; min-height: 100%;
+            background-color: var(--bg-color);
+            transition: background-color 0.3s;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            display: flex;
-            justify-content: center; 
-            align-items: center;    
-            padding: 20px 0;
-            box-sizing: border-box;
+            display: flex; justify-content: center; align-items: flex-start;
+            padding: 20px 0; box-sizing: border-box;
         }
         .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            width: 85%; 
-            max-width: 350px; 
-            box-sizing: border-box;
+            background-color: var(--container-bg); padding: 25px;
+            border-radius: 12px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            width: 85%; max-width: 380px; box-sizing: border-box;
+            transition: background-color 0.3s;
+        }
+        
+        .header-row {
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 15px; margin-bottom: 20px;
         }
         h2 {
-            text-align: center;
-            color: #1d1d1f;
-            margin-top: 0;
-            font-size: 20px;
-            border-bottom: 1px solid #d2d2d7;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
+            color: var(--text-main); margin: 0; font-size: 18px;
         }
-        .input-group {
-            margin-bottom: 15px;
+        .theme-btn {
+            background: none; border: none; font-size: 20px; cursor: pointer;
+            padding: 5px; color: var(--text-main);
         }
+
+        .tabs {
+            display: flex; gap: 10px; margin-bottom: 20px;
+        }
+        .tab-btn {
+            flex: 1; padding: 10px; border: none; border-radius: 8px;
+            font-size: 14px; font-weight: 600; cursor: pointer;
+            background-color: var(--btn-secondary); color: var(--text-main);
+            transition: 0.2s;
+        }
+        .tab-btn.active {
+            background-color: var(--primary); color: white;
+        }
+
+        .input-group { margin-bottom: 15px; }
         label {
-            display: block;
-            margin-bottom: 5px;
-            color: #1d1d1f;
-            font-size: 14px;
-            font-weight: 600;
+            display: block; margin-bottom: 5px; color: var(--text-main);
+            font-size: 13px; font-weight: 600;
         }
         input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #d2d2d7;
-            border-radius: 8px;
-            font-size: 16px;
-            box-sizing: border-box;
-            background-color: #fbfbfd;
+            width: 100%; padding: 10px; border: 1px solid var(--border-color);
+            border-radius: 8px; font-size: 16px; box-sizing: border-box;
+            background-color: var(--input-bg); color: var(--text-main);
         }
-        input:focus {
-            outline: none;
-            border-color: #0071e3;
-            background-color: white;
-        }
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        button {
-            flex: 2;
-            padding: 12px;
-            background-color: #0071e3;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        button:hover {
-            background-color: #0077ed;
+        input:focus { outline: none; border-color: var(--primary); }
+
+        .button-group { display: flex; gap: 10px; margin-top: 20px; }
+        button.action-btn {
+            flex: 2; padding: 12px; background-color: var(--primary);
+            color: white; border: none; border-radius: 8px;
+            font-size: 16px; font-weight: 600; cursor: pointer;
         }
         button.clear-btn {
-            flex: 1;
-            background-color: #e8e8ed;
-            color: #1d1d1f;
+            flex: 1; background-color: var(--btn-secondary);
+            color: var(--text-main); border: none; border-radius: 8px; font-size: 16px; font-weight: 600;
         }
-        button.clear-btn:hover {
-            background-color: #d2d2d7;
-        }
+
         .result-box {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f5f5f7;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid #d2d2d7;
+            margin-top: 20px; padding: 15px; background-color: var(--bg-color);
+            border-radius: 8px; text-align: center; border: 1px solid var(--border-color);
         }
         .result-label {
-            font-size: 14px;
-            color: #86868b;
-            font-weight: 600;
-            text-transform: uppercase;
+            font-size: 14px; color: var(--text-muted); font-weight: 600;
         }
         .result-value {
-            font-size: 32px;
-            font-weight: bold;
-            color: #0071e3;
-            margin-top: 5px;
+            font-size: 28px; font-weight: bold; color: var(--primary); margin-top: 5px;
         }
+
+        .history-section {
+            margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 15px;
+        }
+        .history-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+        }
+        .history-title {
+            color: var(--text-main); font-size: 14px; font-weight: bold;
+        }
+        .history-clear {
+            background: none; border: none; color: #ff3b30; font-size: 12px; font-weight: bold; cursor: pointer;
+        }
+        .history-list {
+            list-style: none; padding: 0; margin: 0; max-height: 150px; overflow-y: auto;
+        }
+        .history-list li {
+            font-size: 12px; color: var(--text-muted); padding: 8px 0; border-bottom: 1px dashed var(--border-color);
+            display: flex; justify-content: space-between;
+        }
+        .history-list li span.h-res { color: var(--text-main); font-weight: bold; }
     </style>
 </head>
 <body>
  
 <div class="container">
-    <h2>Üretim / Maliyet Hesaplayıcı</h2>
+    <div class="header-row">
+        <h2>Karton Hsp.</h2>
+        <button class="theme-btn" onclick="toggleTheme()" id="themeIcon">🌙</button>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" id="tabKg" onclick="setMode('kg')">KG Bul</button>
+        <button class="tab-btn" id="tabTabaka" onclick="setMode('tabaka')">Tabaka Bul</button>
+    </div>
     
     <form id="calcForm" onsubmit="event.preventDefault();" autocomplete="off">
         <div class="input-group">
@@ -129,111 +155,183 @@
         </div>
         
         <div class="input-group">
-            <label for="fld_b">EN (Örn: 22,2 veya 222,2)</label>
+            <label for="fld_b">EN (Örn: 22,2)</label>
             <input type="text" id="fld_b" name="r_2" tabindex="2" inputmode="decimal" placeholder="0" autocomplete="off" autocorrect="off" spellcheck="false" onfocus="this.select()">
         </div>
         
         <div class="input-group">
-            <label for="fld_c">BOY (Örn: 22,2 veya 222,2)</label>
+            <label for="fld_c">BOY (Örn: 22,2)</label>
             <input type="text" id="fld_c" name="r_3" tabindex="3" inputmode="decimal" placeholder="0" autocomplete="off" autocorrect="off" spellcheck="false" onfocus="this.select()">
         </div>
         
         <div class="input-group">
-            <label for="fld_d">TABAKA (Otomatik Noktalamalı)</label>
+            <label id="label_d" for="fld_d">TABAKA ADEDİ</label>
             <input type="text" id="fld_d" name="r_4" tabindex="4" inputmode="numeric" placeholder="0" autocomplete="off" autocorrect="off" spellcheck="false" onfocus="this.select()">
         </div>
     </form>
     
     <div class="button-group">
-        <button onclick="hesapla()" tabindex="5">Hesapla</button>
-        <button class="clear-btn" onclick="temizle()" tabindex="6">Temizle</button>
+        <button class="action-btn" onclick="hesapla()" tabindex="5">Hesapla</button>
+        <button class="clear-btn" onclick="temizleEkrani()" tabindex="6">Sil</button>
     </div>
     
     <div class="result-box">
-        <div class="result-label">KG MİKTARI</div>
+        <div class="result-label" id="sonuc_baslik">SONUÇ (KG)</div>
         <div id="sonuc" class="result-value">-</div>
+    </div>
+
+    <div class="history-section">
+        <div class="history-header">
+            <span class="history-title">Geçmiş Kayıtlar</span>
+            <button class="history-clear" onclick="gecmisiSil()">Tümünü Sil</button>
+        </div>
+        <ul class="history-list" id="historyList">
+            </ul>
     </div>
 </div>
  
 <script>
-// GRAMAJ
-const gramajInput = document.getElementById('fld_a');
-function temizleGramaj(val) {
-    let temiz = val.replace(/[^0-9]/g, '');
-    if (temiz.length > 3) temiz = temiz.slice(0, 3);
-    return temiz;
+let currentMode = 'kg'; // 'kg' veya 'tabaka'
+
+// THEME (DARK/LIGHT MODE)
+function initTheme() {
+    let savedTheme = localStorage.getItem('bristolTheme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    document.getElementById('themeIcon').innerText = savedTheme === 'dark' ? '☀️' : '🌙';
 }
-gramajInput.addEventListener('input', function() { 
-    this.value = temizleGramaj(this.value); 
-    hesapla();
-});
- 
-// EN ve BOY (Virgüllü iOS Klavyelerine tam uyumlu)
-function filtreleEnBoy(val) {
-    let temiz = val.replace(/[.,eE+\-]/g, ',');
-    temiz = temiz.replace(/[^0-9,]/g, '');
-    let parcalar = temiz.split(',');
-    if (parcalar.length > 2) {
-        temiz = parcalar[0] + ',' + parcalar.slice(1).join('');
-        parcalar = temiz.split(',');
+function toggleTheme() {
+    let current = document.documentElement.getAttribute('data-theme');
+    let newTheme = current === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('bristolTheme', newTheme);
+    document.getElementById('themeIcon').innerText = newTheme === 'dark' ? '☀️' : '🌙';
+}
+initTheme();
+
+// MODE SWITCHER (KG <-> TABAKA)
+function setMode(mode) {
+    currentMode = mode;
+    document.getElementById('fld_d').value = '';
+    document.getElementById('sonuc').innerText = '-';
+    
+    if(mode === 'kg') {
+        document.getElementById('tabKg').classList.add('active');
+        document.getElementById('tabTabaka').classList.remove('active');
+        document.getElementById('label_d').innerText = "TABAKA ADEDİ (Noktalamalı)";
+        document.getElementById('fld_d').setAttribute('inputmode', 'numeric');
+        document.getElementById('sonuc_baslik').innerText = "SONUÇ (KG)";
+    } else {
+        document.getElementById('tabTabaka').classList.add('active');
+        document.getElementById('tabKg').classList.remove('active');
+        document.getElementById('label_d').innerText = "KİLOGRAM (KG) (Virgüllü)";
+        document.getElementById('fld_d').setAttribute('inputmode', 'decimal');
+        document.getElementById('sonuc_baslik').innerText = "SONUÇ (TABAKA)";
     }
-    let tamKisim = parcalar[0];
-    let ondalikKisim = parcalar[1];
-    if (tamKisim.length > 3) tamKisim = tamKisim.slice(0, 3);
-    if (parcalar.length > 1 && tamKisim.length < 2) return tamKisim; 
-    if (ondalikKisim !== undefined) return tamKisim + ',' + ondalikKisim;
-    return tamKisim;
 }
 
-const enInput = document.getElementById('fld_b');
-const boyInput = document.getElementById('fld_c');
-[enInput, boyInput].forEach(input => {
-   input.addEventListener('input', function() { 
-        this.value = filtreleEnBoy(this.value); 
-        hesapla();
-   });
+// GİRDİ FİLTRELERİ (iOS Uyumlu)
+document.getElementById('fld_a').addEventListener('input', function() { 
+    let t = this.value.replace(/[^0-9]/g, ''); 
+    this.value = t.length > 3 ? t.slice(0,3) : t; 
 });
- 
-// TABAKA
-const tabakaInput = document.getElementById('fld_d');
-function formatlaTabaka(val) {
-    let sadeceSayi = val.replace(/[^0-9]/g, '');
-    if (!sadeceSayi) return '';
-    return new Intl.NumberFormat('tr-TR').format(parseInt(sadeceSayi, 10));
+
+function filtreleOndalik(val) {
+    let t = val.replace(/[.,eE+\-]/g, ',').replace(/[^0-9,]/g, '');
+    let p = t.split(',');
+    if (p.length > 2) t = p[0] + ',' + p.slice(1).join('');
+    return t;
 }
-tabakaInput.addEventListener('input', function() { 
-    this.value = formatlaTabaka(this.value); 
-    hesapla();
+
+['fld_b', 'fld_c'].forEach(id => {
+   document.getElementById(id).addEventListener('input', function() { this.value = filtreleOndalik(this.value); });
+});
+
+document.getElementById('fld_d').addEventListener('input', function() { 
+    if(currentMode === 'kg') {
+        let t = this.value.replace(/[^0-9]/g, '');
+        this.value = t ? new Intl.NumberFormat('tr-TR').format(parseInt(t, 10)) : '';
+    } else {
+        this.value = filtreleOndalik(this.value);
+    }
 });
  
+// HESAPLAMA MOTORU
 function hesapla() {
-    let a = parseFloat(document.getElementById('fld_a').value) || 0;
-    let b = parseFloat(document.getElementById('fld_b').value.replace(',', '.')) || 0;
-    let c = parseFloat(document.getElementById('fld_c').value.replace(',', '.')) || 0;
-    let d = parseFloat(document.getElementById('fld_d').value.replace(/\./g, '')) || 0;
+    let gr = parseFloat(document.getElementById('fld_a').value) || 0;
+    let en = parseFloat(document.getElementById('fld_b').value.replace(',', '.')) || 0;
+    let boy = parseFloat(document.getElementById('fld_c').value.replace(',', '.')) || 0;
     
-    let hamSonuc = (a * b * c * d) / 10000000;
-    let tamKisim = Math.floor(hamSonuc);
-    let kusurat = hamSonuc - tamKisim;
+    if (gr === 0 || en === 0 || boy === 0) return;
+
+    let d_val = document.getElementById('fld_d').value;
+    let d_num = currentMode === 'kg' ? parseFloat(d_val.replace(/\./g, '')) || 0 : parseFloat(d_val.replace(',', '.')) || 0;
+    if (d_num === 0) return;
+
+    let formatliSonuc = "";
+    let kisaOzet = "";
+
+    if (currentMode === 'kg') {
+        // Tabakadan KG bulma
+        let ham = (gr * en * boy * d_num) / 10000000;
+        let tam = Math.floor(ham);
+        let kusurat = ham - tam;
+        let finalSonuc = (kusurat >= 0.10) ? Math.ceil(ham) : Math.floor(ham);
+        formatliSonuc = new Intl.NumberFormat('tr-TR').format(finalSonuc) + " KG";
+        kisaOzet = `${gr}g | ${en}x${boy} | ${new Intl.NumberFormat('tr-TR').format(d_num)} Tbk`;
+    } else {
+        // KG'dan Tabaka bulma
+        let tabaka = (d_num * 10000000) / (gr * en * boy);
+        let finalTabaka = Math.round(tabaka); // Tabaka tam sayı olmalı
+        formatliSonuc = new Intl.NumberFormat('tr-TR').format(finalTabaka) + " TBK";
+        kisaOzet = `${gr}g | ${en}x${boy} | ${d_val} KG`;
+    }
     
-    let finalSonuc = (kusurat >= 0.10) ? Math.ceil(hamSonuc) : Math.floor(hamSonuc);
-    
-    let formatliFinal = new Intl.NumberFormat('tr-TR').format(finalSonuc);
-    document.getElementById('sonuc').innerText = formatliFinal + " kg";
+    document.getElementById('sonuc').innerText = formatliSonuc;
+    gecmiseEkle(kisaOzet, formatliSonuc);
 }
  
-function temizle() {
+// GEÇMİŞ (LOCALSTORAGE)
+function gecmiseEkle(ozet, sonuc) {
+    let gecmis = JSON.parse(localStorage.getItem('bristolGecmis')) || [];
+    let tarih = new Date().toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'});
+    gecmis.unshift({zaman: tarih, bilgi: ozet, cevap: sonuc});
+    if(gecmis.length > 15) gecmis.pop(); // Son 15 kaydı tutar
+    localStorage.setItem('bristolGecmis', JSON.stringify(gecmis));
+    gecmisiYukle();
+}
+
+function gecmisiYukle() {
+    let gecmis = JSON.parse(localStorage.getItem('bristolGecmis')) || [];
+    let listHTML = "";
+    gecmis.forEach(item => {
+        listHTML += `<li><span>[${item.zaman}] ${item.bilgi}</span> <span class="h-res">${item.cevap}</span></li>`;
+    });
+    document.getElementById('historyList').innerHTML = listHTML;
+}
+
+function gecmisiSil() {
+    if(confirm("Tüm geçmiş kayıtlar silinsin mi?")) {
+        localStorage.removeItem('bristolGecmis');
+        gecmisiYukle();
+    }
+}
+
+function temizleEkrani() {
     document.getElementById('fld_a').value = '';
     document.getElementById('fld_b').value = '';
     document.getElementById('fld_c').value = '';
     document.getElementById('fld_d').value = '';
     document.getElementById('sonuc').innerText = '-';
 }
+
+// Sayfa açıldığında geçmişi yükle
+window.onload = gecmisiYukle;
 </script>
+
 <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js')
-      .then(() => console.log('Çevrimdışı mod (ve yeni ağ mantığı) aktif!'))
+      .then(() => console.log('Çevrimdışı mod aktif!'))
       .catch((err) => console.log('Hata:', err));
   }
 </script>
