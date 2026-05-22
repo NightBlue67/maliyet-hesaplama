@@ -1,520 +1,163 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta name="apple-mobile-web-app-title" content="Maliyet Hesapla">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maliyet Hesaplama</title>
 
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width,
-                   initial-scale=1.0,
-                   maximum-scale=1.0,
-                   user-scalable=no">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 10px;
+      padding-bottom: 90px;
+    }
 
-    <title>Üretim & Maliyet Hesaplayıcı</title>
+    input, select, textarea {
+      display: block;
+      width: 90%;
+      margin: 10px auto;
+      padding: 12px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
 
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            min-height: 100%;
-            background-color: #f5f5f7;
-        }
+    button.main {
+      display: block;
+      width: 90%;
+      margin: 10px auto;
+      padding: 12px;
+      font-size: 16px;
+    }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont,
-                         "Segoe UI", Roboto,
-                         Helvetica, Arial, sans-serif;
+    /* MOBILE TOOLBAR */
+    .toolbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: #111;
+      display: flex;
+      gap: 6px;
+      padding: 8px;
+      z-index: 99999;
+      box-sizing: border-box;
+    }
 
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px 0;
-            box-sizing: border-box;
-        }
+    .toolbar button {
+      flex: 1;
+      border: 0;
+      border-radius: 8px;
+      font-size: 14px;
+      color: white;
+    }
 
-        .container {
-            background-color: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            width: 85%;
-            max-width: 350px;
-            box-sizing: border-box;
-        }
-
-        h2 {
-            text-align: center;
-            color: #1d1d1f;
-            margin-top: 0;
-            font-size: 20px;
-            border-bottom: 1px solid #d2d2d7;
-            padding-bottom: 15px;
-            margin-bottom: 20px;
-        }
-
-        .input-group {
-            margin-bottom: 15px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #1d1d1f;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #d2d2d7;
-            border-radius: 8px;
-            font-size: 16px;
-            box-sizing: border-box;
-            background-color: #fbfbfd;
-            -webkit-appearance: none;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: #0071e3;
-            background-color: white;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        button {
-            flex: 2;
-            padding: 12px;
-            background-color: #0071e3;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #0077ed;
-        }
-
-        button.clear-btn {
-            flex: 1;
-            background-color: #e8e8ed;
-            color: #1d1d1f;
-        }
-
-        button.clear-btn:hover {
-            background-color: #d2d2d7;
-        }
-
-        .result-box {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f5f5f7;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid #d2d2d7;
-        }
-
-        .result-label {
-            font-size: 14px;
-            color: #86868b;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .result-value {
-            font-size: 32px;
-            font-weight: bold;
-            color: #0071e3;
-            margin-top: 5px;
-        }
-    </style>
+    .prev { background: #444; }
+    .next { background: #2d6cdf; }
+    .calc { background: #16a34a; }
+  </style>
 </head>
 
 <body>
 
-<div class="container">
-    <h2>Üretim / Maliyet Hesaplayıcı</h2>
+  <!-- ===================== -->
+  <!-- SENİN MEVCUT INPUTLAR -->
+  <!-- ===================== -->
 
-    <form id="calcForm"
-          action="javascript:void(0);"
-          autocomplete="off">
+  <input type="number" placeholder="Malzeme maliyeti">
+  <input type="number" placeholder="İşçilik">
+  <input type="number" placeholder="Nakliye">
+  <input type="number" placeholder="Diğer">
 
-        <div class="input-group">
-            <label for="k1">
-                GRAMAJ (Sadece Tam Sayı)
-            </label>
-            <input
-                    type="text"
-                    id="k1"
-                    inputmode="numeric"
-                    pattern="[0-9]*"
-                    enterkeyhint="next"
-                    placeholder="0"
-                    autocomplete="off"
-                    autocorrect="off"
-                    autocapitalize="off"
-                    spellcheck="false"
-                    onfocus="this.select()">
-        </div>
+  <button class="main" onclick="hesapla()">Hesapla</button>
 
-        <div class="input-group">
-            <label for="k2">
-                EN (Örn: 22,2 veya 222,2)
-            </label>
-            <input
-                type="text"
-                id="k2"
-                inputmode="decimal"
-                enterkeyhint="next"
-                placeholder="0"
-                autocomplete="off"
-                autocorrect="off"
-                autocapitalize="off"
-                spellcheck="false"
-                onfocus="this.select()">
-        </div>
+  <!-- ===================== -->
+  <!-- MOBİL TOOLBAR -->
+  <!-- ===================== -->
 
-        <div class="input-group">
-            <label for="k3">
-                BOY (Örn: 22,2 veya 222,2)
-            </label>
-            <input
-                type="text"
-                id="k3"
-                inputmode="decimal"
-                enterkeyhint="next"
-                placeholder="0"
-                autocomplete="off"
-                autocorrect="off"
-                autocapitalize="off"
-                spellcheck="false"
-                onfocus="this.select()">
-        </div>
+  <div class="toolbar">
+    <button class="prev" id="prevBtn">Geri</button>
+    <button class="next" id="nextBtn">İleri</button>
+    <button class="calc" id="calcBtn">Hesapla</button>
+  </div>
 
-        <div class="input-group">
-            <label for="k4">
-                TABAKA (Otomatik Noktalamalı)
-            </label>
-            <input
-                type="text"
-                id="k4"
-                inputmode="numeric"
-                pattern="[0-9]*"
-                enterkeyhint="done"
-                placeholder="0"
-                autocomplete="off"
-                autocorrect="off"
-                autocapitalize="off"
-                spellcheck="false"
-                onfocus="this.select()">
-        </div>
-    </form>
+  <!-- ===================== -->
+  <!-- JS -->
+  <!-- ===================== -->
 
-    <div class="button-group">
-        <button onclick="hesapla()">
-            Hesapla
-        </button>
-
-        <button class="clear-btn"
-                onclick="temizle()">
-            Temizle
-        </button>
-    </div>
-
-    <div class="result-box">
-        <div class="result-label">
-            KG MİKTARI
-        </div>
-        <div id="sonuc"
-             class="result-value">
-            -
-        </div>
-    </div>
-</div>
-
-<script>
-
-const inputSirasi = ['k1','k2','k3','k4'];
-
-document
-.querySelectorAll('#calcForm input')
-.forEach(input => {
-
-    input.addEventListener('keydown', function(e){
-
-        if(e.key === 'Enter'){
-
-            e.preventDefault();
-
-            const aktif =
-                this.id;
-
-            const index =
-                inputSirasi.indexOf(aktif);
-
-            const sonraki =
-                inputSirasi[index + 1];
-
-            if(sonraki){
-                document
-                .getElementById(sonraki)
-                .focus();
-            } else {
-                this.blur();
-            }
-        }
-    });
-});
-
-const gramajInput =
-document.getElementById('k1');
-
-function temizleGramaj(val){
-    let temiz =
-        val.replace(/[^0-9]/g,'');
-
-    if(temiz.length > 3){
-        temiz =
-            temiz.slice(0,3);
-    }
-
-    return temiz;
-}
-
-gramajInput.addEventListener(
-'input',
-function(){
-    this.value =
-        temizleGramaj(
-            this.value
-        );
-    hesapla();
-});
-
-function filtreleEnBoy(val){
-
-    let temiz =
-        val.replace(
-            /[.,eE+\-]/g,
-            ','
-        );
-
-    temiz =
-        temiz.replace(
-            /[^0-9,]/g,
-            ''
-        );
-
-    let parcalar =
-        temiz.split(',');
-
-    if(parcalar.length > 2){
-
-        temiz =
-            parcalar[0]
-            + ','
-            + parcalar
-            .slice(1)
-            .join('');
-
-        parcalar =
-            temiz.split(',');
-    }
-
-    let tamKisim =
-        parcalar[0];
-
-    let ondalik =
-        parcalar[1];
-
-    if(tamKisim.length > 3){
-        tamKisim =
-            tamKisim.slice(0,3);
-    }
-
-    if(
-        parcalar.length > 1
-        &&
-        tamKisim.length < 2
-    ){
-        return tamKisim;
-    }
-
-    if(
-        ondalik !== undefined
-    ){
-        return tamKisim
-             + ','
-             + ondalik;
-    }
-
-    return tamKisim;
-}
-
-['k2','k3']
-.forEach(id => {
-
-    document
-    .getElementById(id)
-    .addEventListener(
-        'input',
-        function(){
-
-            this.value =
-                filtreleEnBoy(
-                    this.value
-                );
-
-            hesapla();
-        }
+  <script>
+    const inputs = Array.from(
+      document.querySelectorAll("input, select, textarea")
+    ).filter(el =>
+      el.type !== "hidden" &&
+      !el.disabled
     );
-});
 
-const tabakaInput =
-document.getElementById('k4');
+    let currentIndex = 0;
 
-function formatlaTabaka(val){
+    function focusInput(index) {
+      if (!inputs.length) return;
 
-    let sadeceSayi =
-        val.replace(
-            /[^0-9]/g,
-            ''
-        );
+      currentIndex = Math.max(0, Math.min(index, inputs.length - 1));
 
-    if(!sadeceSayi)
-        return '';
+      const el = inputs[currentIndex];
+      if (!el) return;
 
-    return new Intl
-    .NumberFormat('tr-TR')
-    .format(
-        parseInt(
-            sadeceSayi,
-            10
-        )
-    );
-}
+      el.focus({ preventScroll: true });
 
-tabakaInput.addEventListener(
-'input',
-function(){
+      el.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    }
 
-    this.value =
-        formatlaTabaka(
-            this.value
-        );
+    function next() {
+      focusInput(currentIndex + 1);
+    }
 
-    hesapla();
-});
+    function prev() {
+      focusInput(currentIndex - 1);
+    }
 
-function hesapla(){
+    function hesapla() {
+      let total = 0;
 
-    let a =
-        parseFloat(
-            document
-            .getElementById('k1')
-            .value
-        ) || 0;
+      inputs.forEach(i => {
+        const val = Number(i.value || 0);
+        if (!isNaN(val)) total += val;
+      });
 
-    let b =
-        parseFloat(
-            document
-            .getElementById('k2')
-            .value
-            .replace(',', '.')
-        ) || 0;
+      alert("Toplam maliyet: " + total);
+    }
 
-    let c =
-        parseFloat(
-            document
-            .getElementById('k3')
-            .value
-            .replace(',', '.')
-        ) || 0;
+    // toolbar events
+    document.getElementById("nextBtn").addEventListener("click", next);
+    document.getElementById("prevBtn").addEventListener("click", prev);
+    document.getElementById("calcBtn").addEventListener("click", hesapla);
 
-    let d =
-        parseFloat(
-            document
-            .getElementById('k4')
-            .value
-            .replace(/\./g,'')
-        ) || 0;
+    // input tracking
+    inputs.forEach((el, i) => {
+      el.addEventListener("focus", () => {
+        currentIndex = i;
+      });
 
-    let hamSonuc =
-        (a*b*c*d)
-/10000000;
-
-    let tamKisim =
-        Math.floor(
-            hamSonuc
-        );
-
-    let kusurat =
-        hamSonuc
-        - tamKisim;
-
-    let finalSonuc =
-        (
-            kusurat >= 0.10
-        )
-        ? Math.ceil(
-            hamSonuc
-        )
-        : Math.floor(
-            hamSonuc
-        );
-
-    document
-    .getElementById(
-        'sonuc'
-    )
-    .innerText =
-        new Intl
-        .NumberFormat(
-            'tr-TR'
-        )
-        .format(
-            finalSonuc
-        )
-        + ' kg';
-}
-
-function temizle(){
-
-    ['k1','k2','k3','k4']
-    .forEach(id => {
-
-        document
-        .getElementById(id)
-        .value = '';
+      el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          next();
+        }
+      });
     });
 
-    document
-    .getElementById(
-        'sonuc'
-    )
-    .innerText = '-';
+    // initial focus
+    window.addEventListener("load", () => {
+      setTimeout(() => focusInput(0), 300);
+    });
 
-    document
-    .getElementById(
-        'k1'
-    )
-    .focus();
-}
-
-</script>
+    // expose global (PWA uyumu için)
+    window.hesapla = hesapla;
+  </script>
 
 </body>
 </html>
