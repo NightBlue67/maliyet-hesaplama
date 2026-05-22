@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bristol-v5';
+const CACHE_NAME = 'bristol-v6';
 
 const ASSETS = [
   './',
