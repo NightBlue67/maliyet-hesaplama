@@ -168,16 +168,10 @@
             <label id="label_d" for="fld_d">TABAKA ADEDİ</label>
             <input type="text" id="fld_d" name="r_4" tabindex="4" inputmode="numeric" placeholder="0" autocomplete="off" autocorrect="off" spellcheck="false" oninput="hesapla()" onfocus="this.select()">
         </div>
-    </form>
+</form>
     
     <div class="button-group">
         <button class="action-btn" onclick="hesaplaVeKaydet()" tabindex="5">Hesapla</button>
-        <button class="clear-btn" onclick="temizleEkrani()" tabindex="6">Sil</button>
-    </div>
-    </form>
-    
-    <div class="button-group">
-        <button class="action-btn" onclick="hesapla()" tabindex="5">Hesapla</button>
         <button class="clear-btn" onclick="temizleEkrani()" tabindex="6">Sil</button>
     </div>
     
@@ -261,39 +255,48 @@ document.getElementById('fld_d').addEventListener('input', function() {
     }
 });
  
-// HESAPLAMA MOTORU
+// --- YENİ HESAPLAMA VE KAYIT BLOĞU ---
+
+// Sadece anlık hesaplama yapar (ekrana yazdırır, geçmişe eklemez)
 function hesapla() {
+    let sonuc = hesaplamaMotoru();
+    document.getElementById('sonuc').innerText = sonuc.formatliSonuc;
+}
+
+// Butona basınca çalışır, ekrana yazdırır ve geçmişe kaydeder
+function hesaplaVeKaydet() {
+    let sonuc = hesaplamaMotoru();
+    document.getElementById('sonuc').innerText = sonuc.formatliSonuc;
+    
+    // Eğer sonuç geçerliyse (yani "-" değilse) geçmişe ekle
+    if (sonuc.kisaOzet !== "") {
+        gecmiseEkle(sonuc.kisaOzet, sonuc.formatliSonuc);
+    }
+}
+
+// Hesaplama mantığını tek bir merkezde topladık
+function hesaplamaMotoru() {
     let gr = parseFloat(document.getElementById('fld_a').value) || 0;
     let en = parseFloat(document.getElementById('fld_b').value.replace(',', '.')) || 0;
     let boy = parseFloat(document.getElementById('fld_c').value.replace(',', '.')) || 0;
-    
-    if (gr === 0 || en === 0 || boy === 0) return;
-
     let d_val = document.getElementById('fld_d').value;
     let d_num = currentMode === 'kg' ? parseFloat(d_val.replace(/\./g, '')) || 0 : parseFloat(d_val.replace(',', '.')) || 0;
-    if (d_num === 0) return;
+    
+    if (gr === 0 || en === 0 || boy === 0 || d_num === 0) return {formatliSonuc: "-", kisaOzet: ""};
 
-    let formatliSonuc = "";
-    let kisaOzet = "";
+    let res = {formatliSonuc: "", kisaOzet: ""};
 
     if (currentMode === 'kg') {
-        // Tabakadan KG bulma
         let ham = (gr * en * boy * d_num) / 10000000;
-        let tam = Math.floor(ham);
-        let kusurat = ham - tam;
-        let finalSonuc = (kusurat >= 0.10) ? Math.ceil(ham) : Math.floor(ham);
-        formatliSonuc = new Intl.NumberFormat('tr-TR').format(finalSonuc) + " KG";
-        kisaOzet = `${gr}g | ${en}x${boy} | ${new Intl.NumberFormat('tr-TR').format(d_num)} Tbk`;
+        let final = (ham - Math.floor(ham) >= 0.10) ? Math.ceil(ham) : Math.floor(ham);
+        res.formatliSonuc = new Intl.NumberFormat('tr-TR').format(final) + " KG";
+        res.kisaOzet = `${gr}g | ${en}x${boy} | ${new Intl.NumberFormat('tr-TR').format(d_num)} Tbk`;
     } else {
-        // KG'dan Tabaka bulma
-        let tabaka = (d_num * 10000000) / (gr * en * boy);
-        let finalTabaka = Math.round(tabaka); // Tabaka tam sayı olmalı
-        formatliSonuc = new Intl.NumberFormat('tr-TR').format(finalTabaka) + " TBK";
-        kisaOzet = `${gr}g | ${en}x${boy} | ${d_val} KG`;
+        let tabaka = Math.round((d_num * 10000000) / (gr * en * boy));
+        res.formatliSonuc = new Intl.NumberFormat('tr-TR').format(tabaka) + " TBK";
+        res.kisaOzet = `${gr}g | ${en}x${boy} | ${d_val} KG`;
     }
-    
-    document.getElementById('sonuc').innerText = formatliSonuc;
-    gecmiseEkle(kisaOzet, formatliSonuc);
+    return res;
 }
  
 // GEÇMİŞ (LOCALSTORAGE)
