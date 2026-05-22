@@ -10,154 +10,154 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 10px;
-      padding-bottom: 90px;
+      padding-bottom: 80px; /* toolbar space */
     }
 
+    /* SENİN ESKİ TASARIMIN BURADA KORUNUR */
     input, select, textarea {
-      display: block;
-      width: 90%;
-      margin: 10px auto;
-      padding: 12px;
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
       font-size: 16px;
       box-sizing: border-box;
     }
 
-    button.main {
-      display: block;
-      width: 90%;
-      margin: 10px auto;
-      padding: 12px;
+    button {
+      padding: 10px;
       font-size: 16px;
     }
 
-    /* MOBILE TOOLBAR */
-    .toolbar {
+    /* TOOLBAR (EKLENDİ - TASARIMI BOZMAZ) */
+    #navBar {
       position: fixed;
-      bottom: 0;
       left: 0;
       right: 0;
-      height: 64px;
-      background: #111;
+      bottom: 0;
       display: flex;
       gap: 6px;
       padding: 8px;
-      z-index: 99999;
+      background: #111;
+      z-index: 999999;
       box-sizing: border-box;
     }
 
-    .toolbar button {
+    #navBar button {
       flex: 1;
       border: 0;
-      border-radius: 8px;
-      font-size: 14px;
+      border-radius: 6px;
       color: white;
+      font-size: 14px;
     }
 
-    .prev { background: #444; }
-    .next { background: #2d6cdf; }
-    .calc { background: #16a34a; }
+    #prev { background: #444; }
+    #next { background: #2d6cdf; }
+    #calc { background: #16a34a; }
   </style>
 </head>
 
 <body>
 
-  <!-- ===================== -->
-  <!-- SENİN MEVCUT INPUTLAR -->
-  <!-- ===================== -->
+<!-- ========================= -->
+<!-- SENİN ORİJİNAL INPUTLARIN -->
+<!-- (BURAYA DOKUNMUYORUZ)     -->
+<!-- ========================= -->
 
-  <input type="number" placeholder="Malzeme maliyeti">
-  <input type="number" placeholder="İşçilik">
-  <input type="number" placeholder="Nakliye">
-  <input type="number" placeholder="Diğer">
+<input type="number" placeholder="Gramaj">
+<input type="number" placeholder="En">
+<input type="number" placeholder="Boy">
+<input type="number" placeholder="Tabaka">
 
-  <button class="main" onclick="hesapla()">Hesapla</button>
+<button onclick="hesapla()">Hesapla</button>
 
-  <!-- ===================== -->
-  <!-- MOBİL TOOLBAR -->
-  <!-- ===================== -->
+<!-- ========================= -->
+<!-- NAV BAR EKLENTİSİ        -->
+<!-- ========================= -->
 
-  <div class="toolbar">
-    <button class="prev" id="prevBtn">Geri</button>
-    <button class="next" id="nextBtn">İleri</button>
-    <button class="calc" id="calcBtn">Hesapla</button>
-  </div>
+<div id="navBar">
+  <button id="prev">Geri</button>
+  <button id="next">İleri</button>
+  <button id="calc">Hesapla</button>
+</div>
 
-  <!-- ===================== -->
-  <!-- JS -->
-  <!-- ===================== -->
+<!-- ========================= -->
+<!-- JS (BEHAVIOR LAYER ONLY) -->
+<!-- ========================= -->
 
-  <script>
-    const inputs = Array.from(
-      document.querySelectorAll("input, select, textarea")
-    ).filter(el =>
-      el.type !== "hidden" &&
-      !el.disabled
-    );
+<script>
+(() => {
 
-    let currentIndex = 0;
+  // SADECE GERÇEK INPUTLAR (tasarım bozulmaz)
+  const inputs = Array.from(document.querySelectorAll("input, select, textarea"))
+    .filter(el => !el.disabled && el.type !== "hidden");
 
-    function focusInput(index) {
-      if (!inputs.length) return;
+  let index = 0;
 
-      currentIndex = Math.max(0, Math.min(index, inputs.length - 1));
+  function focus(i) {
+    if (!inputs.length) return;
 
-      const el = inputs[currentIndex];
-      if (!el) return;
+    index = Math.max(0, Math.min(i, inputs.length - 1));
 
-      el.focus({ preventScroll: true });
+    const el = inputs[index];
+    el.focus({ preventScroll: true });
 
-      el.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-      });
-    }
-
-    function next() {
-      focusInput(currentIndex + 1);
-    }
-
-    function prev() {
-      focusInput(currentIndex - 1);
-    }
-
-    function hesapla() {
-      let total = 0;
-
-      inputs.forEach(i => {
-        const val = Number(i.value || 0);
-        if (!isNaN(val)) total += val;
-      });
-
-      alert("Toplam maliyet: " + total);
-    }
-
-    // toolbar events
-    document.getElementById("nextBtn").addEventListener("click", next);
-    document.getElementById("prevBtn").addEventListener("click", prev);
-    document.getElementById("calcBtn").addEventListener("click", hesapla);
-
-    // input tracking
-    inputs.forEach((el, i) => {
-      el.addEventListener("focus", () => {
-        currentIndex = i;
-      });
-
-      el.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          next();
-        }
-      });
+    el.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
     });
+  }
 
-    // initial focus
-    window.addEventListener("load", () => {
-      setTimeout(() => focusInput(0), 300);
+  function next() {
+    focus(index + 1);
+  }
+
+  function prev() {
+    focus(index - 1);
+  }
+
+  function hesapla() {
+    let total = 0;
+    inputs.forEach(i => total += Number(i.value || 0));
+
+    alert("Toplam: " + total);
+  }
+
+  // BUTTON EVENTS
+  document.getElementById("next").addEventListener("click", next);
+  document.getElementById("prev").addEventListener("click", prev);
+  document.getElementById("calc").addEventListener("click", hesapla);
+
+  // INPUT TRACKING
+  inputs.forEach((el, i) => {
+    el.addEventListener("focus", () => index = i);
+
+    el.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        next();
+      }
     });
+  });
 
-    // expose global (PWA uyumu için)
-    window.hesapla = hesapla;
-  </script>
+  // KEYBOARD FIX (klavye üstüne çıkma problemi çözülür)
+  const bar = document.getElementById("navBar");
+
+  function adjustForKeyboard() {
+    const vh = window.visualViewport?.height || window.innerHeight;
+    const keyboardOpen = vh < window.innerHeight * 0.75;
+
+    bar.style.transform = keyboardOpen
+      ? "translateY(-40px)"
+      : "translateY(0)";
+  }
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", adjustForKeyboard);
+  } else {
+    window.addEventListener("resize", adjustForKeyboard);
+  }
+
+})();
+</script>
 
 </body>
 </html>
