@@ -230,6 +230,12 @@ function temizle() {
     document.getElementById('sonuc').innerText = '-';
 }
 </script>
-
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+      .then(() => console.log('Çevrimdışı mod (ve yeni ağ mantığı) aktif!'))
+      .catch((err) => console.log('Hata:', err));
+  }
+</script>
 </body>
 </html>
