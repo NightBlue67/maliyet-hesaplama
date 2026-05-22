@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
     <meta name="apple-mobile-web-app-title" content="Maliyet Hesapla">
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="manifest" href="manifest.json">
 
     <title>Üretim & Maliyet Hesaplayıcı</title>
 
@@ -21,7 +24,14 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system,
+                         BlinkMacSystemFont,
+                         "Segoe UI",
+                         Roboto,
+                         Helvetica,
+                         Arial,
+                         sans-serif;
+
             display: flex;
             justify-content: center;
             align-items: center;
@@ -30,7 +40,7 @@
         }
 
         .container {
-            background-color: white;
+            background: #fff;
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.08);
@@ -63,7 +73,7 @@
 
         input {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid #d2d2d7;
             border-radius: 8px;
             font-size: 16px;
@@ -75,7 +85,7 @@
         input:focus {
             outline: none;
             border-color: #0071e3;
-            background-color: white;
+            background-color: #fff;
         }
 
         .button-group {
@@ -87,7 +97,7 @@
         button {
             flex: 2;
             padding: 12px;
-            background-color: #0071e3;
+            background: #0071e3;
             color: white;
             border: none;
             border-radius: 8px;
@@ -98,14 +108,14 @@
 
         button.clear-btn {
             flex: 1;
-            background-color: #e8e8ed;
+            background: #e8e8ed;
             color: #1d1d1f;
         }
 
         .result-box {
             margin-top: 20px;
             padding: 15px;
-            background-color: #f5f5f7;
+            background: #f5f5f7;
             border-radius: 8px;
             text-align: center;
             border: 1px solid #d2d2d7;
@@ -133,246 +143,474 @@
 
     <h2>Üretim / Maliyet Hesaplayıcı</h2>
 
-    <form id="calcForm" action="javascript:void(0);" autocomplete="off">
+    <form id="calcForm" autocomplete="off">
 
         <div class="input-group">
             <label for="k1">GRAMAJ (Sadece Tam Sayı)</label>
             <input
                 type="text"
                 id="k1"
+                tabindex="1"
                 inputmode="numeric"
                 enterkeyhint="next"
                 placeholder="0"
                 autocomplete="off"
                 autocorrect="off"
                 autocapitalize="off"
-                spellcheck="false"
-                onfocus="this.select()">
+                spellcheck="false">
         </div>
 
         <div class="input-group">
-            <label for="k2">EN (Örn: 22,2 veya 222,2)</label>
+            <label for="k2">
+                EN (Örn: 22,2 veya 222,2)
+            </label>
+
             <input
                 type="text"
                 id="k2"
+                tabindex="2"
                 inputmode="decimal"
                 enterkeyhint="next"
                 placeholder="0"
                 autocomplete="off"
                 autocorrect="off"
                 autocapitalize="off"
-                spellcheck="false"
-                onfocus="this.select()">
+                spellcheck="false">
         </div>
 
         <div class="input-group">
-            <label for="k3">BOY (Örn: 22,2 veya 222,2)</label>
+            <label for="k3">
+                BOY (Örn: 22,2 veya 222,2)
+            </label>
+
             <input
                 type="text"
                 id="k3"
+                tabindex="3"
                 inputmode="decimal"
                 enterkeyhint="next"
                 placeholder="0"
                 autocomplete="off"
                 autocorrect="off"
                 autocapitalize="off"
-                spellcheck="false"
-                onfocus="this.select()">
+                spellcheck="false">
         </div>
 
         <div class="input-group">
-            <label for="k4">TABAKA (Otomatik Noktalamalı)</label>
+            <label for="k4">
+                TABAKA (Otomatik Noktalamalı)
+            </label>
+
             <input
                 type="text"
                 id="k4"
+                tabindex="4"
                 inputmode="numeric"
                 enterkeyhint="done"
                 placeholder="0"
                 autocomplete="off"
                 autocorrect="off"
                 autocapitalize="off"
-                spellcheck="false"
-                onfocus="this.select()">
+                spellcheck="false">
         </div>
 
     </form>
 
     <div class="button-group">
-        <button onclick="hesapla()">Hesapla</button>
-        <button class="clear-btn" onclick="temizle()">Temizle</button>
+        <button onclick="hesapla()">
+            Hesapla
+        </button>
+
+        <button class="clear-btn"
+                onclick="temizle()">
+            Temizle
+        </button>
     </div>
 
     <div class="result-box">
-        <div class="result-label">KG MİKTARI</div>
-        <div id="sonuc" class="result-value">-</div>
+        <div class="result-label">
+            KG MİKTARI
+        </div>
+
+        <div id="sonuc"
+             class="result-value">
+            -
+        </div>
     </div>
 
 </div>
 
 <script>
 
+// INPUT SIRASI
+const inputSirasi = [
+    'k1',
+    'k2',
+    'k3',
+    'k4'
+];
+
+// SONRAKİ INPUTA GEÇ
+function sonrakiInput(id) {
+
+    const index =
+        inputSirasi.indexOf(id);
+
+    const sonraki =
+        inputSirasi[index + 1];
+
+    if (sonraki) {
+
+        setTimeout(() => {
+
+            document
+                .getElementById(sonraki)
+                .focus();
+
+        }, 50);
+
+    } else {
+
+        document
+            .getElementById(id)
+            .blur();
+    }
+}
+
+
+// iOS CHROME / SAFARI ENTER
+document.querySelectorAll('input')
+.forEach(input => {
+
+    input.addEventListener(
+        'keyup',
+        function(e) {
+
+            if (
+                e.key === 'Enter'
+            ) {
+
+                e.preventDefault();
+
+                sonrakiInput(
+                    this.id
+                );
+            }
+        }
+    );
+});
+
+
 // GRAMAJ
-const gramajInput = document.getElementById('k1');
+const gramajInput =
+document.getElementById('k1');
 
 function temizleGramaj(val) {
-    let temiz = val.replace(/[^0-9]/g, '');
+
+    let temiz =
+        val.replace(
+            /[^0-9]/g,
+            ''
+        );
 
     if (temiz.length > 3) {
-        temiz = temiz.slice(0, 3);
+        temiz = temiz.slice(0,3);
     }
 
     return temiz;
 }
 
-gramajInput.addEventListener('input', function () {
-    this.value = temizleGramaj(this.value);
-    hesapla();
-});
+gramajInput.addEventListener(
+    'input',
+    function() {
+
+        this.value =
+            temizleGramaj(
+                this.value
+            );
+
+        hesapla();
+    }
+);
 
 
-// EN ve BOY
+// PASTE
+gramajInput.addEventListener(
+    'paste',
+    function(e) {
+
+        e.preventDefault();
+
+        let veri =
+        (
+            e.clipboardData ||
+            window.clipboardData
+        ).getData('text');
+
+        this.value =
+            temizleGramaj(veri);
+
+        hesapla();
+    }
+);
+
+
+// EN BOY FİLTRE
 function filtreleEnBoy(val) {
 
-    let temiz = val.replace(/[.,eE+\-]/g, ',');
+    let temiz =
+        val.replace(
+            /[.,eE+\-]/g,
+            ','
+        );
 
-    temiz = temiz.replace(/[^0-9,]/g, '');
+    temiz =
+        temiz.replace(
+            /[^0-9,]/g,
+            ''
+        );
 
-    let parcalar = temiz.split(',');
+    let parcalar =
+        temiz.split(',');
 
     if (parcalar.length > 2) {
-        temiz = parcalar[0] + ',' + parcalar.slice(1).join('');
-        parcalar = temiz.split(',');
+
+        temiz =
+            parcalar[0]
+            + ','
+            + parcalar
+            .slice(1)
+            .join('');
+
+        parcalar =
+            temiz.split(',');
     }
 
-    let tamKisim = parcalar[0];
-    let ondalikKisim = parcalar[1];
+    let tam =
+        parcalar[0];
 
-    if (tamKisim.length > 3) {
-        tamKisim = tamKisim.slice(0, 3);
+    let ondalik =
+        parcalar[1];
+
+    if (tam.length > 3) {
+        tam = tam.slice(0,3);
     }
 
-    if (parcalar.length > 1 && tamKisim.length < 2) {
-        return tamKisim;
+    if (
+        parcalar.length > 1
+        &&
+        tam.length < 2
+    ) {
+        return tam;
     }
 
-    if (ondalikKisim !== undefined) {
-        return tamKisim + ',' + ondalikKisim;
+    if (
+        ondalik !== undefined
+    ) {
+        return tam + ','
+             + ondalik;
     }
 
-    return tamKisim;
+    return tam;
 }
 
-const enInput = document.getElementById('k2');
-const boyInput = document.getElementById('k3');
 
-[enInput, boyInput].forEach(input => {
-    input.addEventListener('input', function () {
-        this.value = filtreleEnBoy(this.value);
-        hesapla();
-    });
+['k2','k3']
+.forEach(id => {
+
+    const input =
+        document
+        .getElementById(id);
+
+    input.addEventListener(
+        'input',
+        function() {
+
+            this.value =
+                filtreleEnBoy(
+                    this.value
+                );
+
+            hesapla();
+        }
+    );
+
+    input.addEventListener(
+        'paste',
+        function(e) {
+
+            e.preventDefault();
+
+            let veri =
+            (
+                e.clipboardData ||
+                window.clipboardData
+            ).getData('text');
+
+            this.value =
+                filtreleEnBoy(
+                    veri
+                );
+
+            hesapla();
+        }
+    );
 });
 
 
 // TABAKA
-const tabakaInput = document.getElementById('k4');
+const tabakaInput =
+document.getElementById('k4');
 
-function formatlaTabaka(val) {
-    let sadeceSayi = val.replace(/[^0-9]/g, '');
+function formatlaTabaka(val){
 
-    if (!sadeceSayi) return '';
+    let sayi =
+        val.replace(
+            /[^0-9]/g,
+            ''
+        );
 
-    return new Intl.NumberFormat('tr-TR')
-        .format(parseInt(sadeceSayi, 10));
+    if (!sayi) return '';
+
+    return new Intl
+    .NumberFormat('tr-TR')
+    .format(
+        parseInt(
+            sayi,
+            10
+        )
+    );
 }
 
-tabakaInput.addEventListener('input', function () {
-    this.value = formatlaTabaka(this.value);
-    hesapla();
-});
+tabakaInput.addEventListener(
+    'input',
+    function(){
+
+        this.value =
+            formatlaTabaka(
+                this.value
+            );
+
+        hesapla();
+    }
+);
+
+tabakaInput.addEventListener(
+    'paste',
+    function(e){
+
+        e.preventDefault();
+
+        let veri =
+        (
+            e.clipboardData ||
+            window.clipboardData
+        ).getData('text');
+
+        this.value =
+            formatlaTabaka(
+                veri
+            );
+
+        hesapla();
+    }
+);
 
 
-// iOS Chrome / Safari input geçiş sistemi
-const inputSirasi = ['k1', 'k2', 'k3', 'k4'];
-
-inputSirasi.forEach((id, index) => {
-
-    document.getElementById(id)
-    .addEventListener('keydown', function(e) {
-
-        if (e.key === 'Enter') {
-
-            e.preventDefault();
-
-            const sonrakiInput =
-                inputSirasi[index + 1];
-
-            if (sonrakiInput) {
-                document
-                .getElementById(sonrakiInput)
-                .focus();
-            } else {
-                this.blur();
-            }
-        }
-    });
-});
-
-
+// HESAPLA
 function hesapla() {
 
     let a =
-        parseFloat(document
-        .getElementById('k1')
-        .value) || 0;
+        parseFloat(
+            document
+            .getElementById('k1')
+            .value
+        ) || 0;
 
     let b =
-        parseFloat(document
-        .getElementById('k2')
-        .value.replace(',', '.')) || 0;
+        parseFloat(
+            document
+            .getElementById('k2')
+            .value
+            .replace(',', '.')
+        ) || 0;
 
     let c =
-        parseFloat(document
-        .getElementById('k3')
-        .value.replace(',', '.')) || 0;
+        parseFloat(
+            document
+            .getElementById('k3')
+            .value
+            .replace(',', '.')
+        ) || 0;
 
     let d =
-        parseFloat(document
-        .getElementById('k4')
-        .value.replace(/\./g, '')) || 0;
+        parseFloat(
+            document
+            .getElementById('k4')
+            .value
+            .replace(/\./g,'')
+        ) || 0;
 
     let hamSonuc =
-        (a * b * c * d) / 10000000;
+        (a*b*c*d)
+        /10000000;
 
-    let tamKisim =
-        Math.floor(hamSonuc);
+    let tam =
+        Math.floor(
+            hamSonuc
+        );
 
     let kusurat =
-        hamSonuc - tamKisim;
+        hamSonuc - tam;
 
-    let finalSonuc =
-        (kusurat >= 0.10)
-        ? Math.ceil(hamSonuc)
-        : Math.floor(hamSonuc);
+    let sonuc =
+        (
+            kusurat >= 0.10
+        )
+        ? Math.ceil(
+            hamSonuc
+        )
+        : Math.floor(
+            hamSonuc
+        );
 
-    let formatliFinal =
-        new Intl.NumberFormat('tr-TR')
-        .format(finalSonuc);
-
-    document.getElementById('sonuc')
-        .innerText = formatliFinal + " kg";
+    document
+    .getElementById(
+        'sonuc'
+    )
+    .innerText =
+        new Intl
+        .NumberFormat(
+            'tr-TR'
+        )
+        .format(
+            sonuc
+        ) + ' kg';
 }
 
+
+// TEMİZLE
 function temizle() {
 
-    document.getElementById('k1').value = '';
-    document.getElementById('k2').value = '';
-    document.getElementById('k3').value = '';
-    document.getElementById('k4').value = '';
+    inputSirasi.forEach(
+        id => {
+            document
+            .getElementById(id)
+            .value = '';
+        }
+    );
 
-    document.getElementById('sonuc')
-        .innerText = '-';
+    document
+    .getElementById(
+        'sonuc'
+    )
+    .innerText = '-';
 
-    document.getElementById('k1').focus();
+    document
+    .getElementById(
+        'k1'
+    )
+    .focus();
 }
 
 </script>
