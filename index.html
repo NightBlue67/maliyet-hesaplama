@@ -122,25 +122,27 @@
 <div class="container">
     <h2>Üretim / Maliyet Hesaplayıcı</h2>
     
-    <div class="input-group">
-        <label for="valA">GRAMAJ (Sadece Tam Sayı)</label>
-        <input type="text" id="valA" name="kutu_grm" tabindex="1" inputmode="numeric" pattern="[0-9]*" placeholder="0" autocomplete="nope" onfocus="this.select()">
-    </div>
-    
-    <div class="input-group">
-        <label for="valB">EN (Örn: 22,2 veya 222,2)</label>
-        <input type="text" id="valB" name="kutu_en" tabindex="2" inputmode="decimal" pattern="[0-9.,]*" placeholder="0" autocomplete="nope" onfocus="this.select()">
-    </div>
-    
-    <div class="input-group">
-        <label for="valC">BOY (Örn: 22,2 veya 222,2)</label>
-        <input type="text" id="valC" name="kutu_by" tabindex="3" inputmode="decimal" pattern="[0-9.,]*" placeholder="0" autocomplete="nope" onfocus="this.select()">
-    </div>
-    
-    <div class="input-group">
-        <label for="valD">TABAKA (Otomatik Noktalamalı)</label>
-        <input type="text" id="valD" name="kutu_tbk" tabindex="4" inputmode="numeric" pattern="[0-9]*" placeholder="0" autocomplete="nope" onfocus="this.select()">
-    </div>
+    <form id="calcForm" onsubmit="event.preventDefault();" autocomplete="off">
+        <div class="input-group">
+            <label for="valA">GRAMAJ (Sadece Tam Sayı)</label>
+            <input type="text" id="valA" name="veri_1" tabindex="1" inputmode="numeric" pattern="[0-9]*" placeholder="0" autocomplete="off" onfocus="this.select()">
+        </div>
+        
+        <div class="input-group">
+            <label for="valB">EN (Örn: 22,2 veya 222,2)</label>
+            <input type="text" id="valB" name="veri_2" tabindex="2" inputmode="decimal" pattern="[0-9.,]*" placeholder="0" autocomplete="off" onfocus="this.select()">
+        </div>
+        
+        <div class="input-group">
+            <label for="valC">BOY (Örn: 22,2 veya 222,2)</label>
+            <input type="text" id="valC" name="veri_3" tabindex="3" inputmode="decimal" pattern="[0-9.,]*" placeholder="0" autocomplete="off" onfocus="this.select()">
+        </div>
+        
+        <div class="input-group">
+            <label for="valD">TABAKA (Otomatik Noktalamalı)</label>
+            <input type="text" id="valD" name="veri_4" tabindex="4" inputmode="numeric" pattern="[0-9]*" placeholder="0" autocomplete="off" onfocus="this.select()">
+        </div>
+    </form>
     
     <div class="button-group">
         <button onclick="hesapla()" tabindex="5">Hesapla</button>
@@ -154,7 +156,6 @@
 </div>
  
 <script>
-// GRAMAJ (valA) filtresi ve anlık hesaplama
 const gramajInput = document.getElementById('valA');
 function temizleGramaj(val) {
     let temiz = val.replace(/[^0-9]/g, '');
@@ -172,7 +173,6 @@ gramajInput.addEventListener('paste', function(e) {
     hesapla();
 });
  
-// EN (valB) ve BOY (valC) filtresi ve anlık hesaplama
 function filtreleEnBoy(val) {
     let temiz = val.replace(/[.,eE+\-]/g, ',');
     temiz = temiz.replace(/[^0-9,]/g, '');
@@ -204,7 +204,6 @@ const boyInput = document.getElementById('valC');
     });
 });
  
-// TABAKA (valD) için Otomatik Binlik Ayırıcı ve anlık hesaplama
 const tabakaInput = document.getElementById('valD');
 function formatlaTabaka(val) {
     let sadeceSayi = val.replace(/[^0-9]/g, '');
@@ -222,7 +221,6 @@ tabakaInput.addEventListener('paste', function(e) {
    hesapla();
 });
  
-// PC İÇİN ENTER AKIŞ YÖNETİMİ
 document.getElementById('valA').addEventListener('keydown', function(e) { if(e.key === 'Enter') { e.preventDefault(); document.getElementById('valB').focus(); } });
 document.getElementById('valB').addEventListener('keydown', function(e) { if(e.key === 'Enter') { e.preventDefault(); document.getElementById('valC').focus(); } });
 document.getElementById('valC').addEventListener('keydown', function(e) { if(e.key === 'Enter') { e.preventDefault(); document.getElementById('valD').focus(); } });
@@ -235,17 +233,10 @@ function hesapla() {
     let d = parseFloat(document.getElementById('valD').value.replace(/\./g, '')) || 0;
     
     let hamSonuc = (a * b * c * d) / 10000000;
-    
     let tamKisim = Math.floor(hamSonuc);
     let kusurat = hamSonuc - tamKisim;
     
-    let finalSonuc;
-    
-    if (kusurat >= 0.10) {
-        finalSonuc = Math.ceil(hamSonuc);
-    } else {
-        finalSonuc = Math.floor(hamSonuc);
-    }
+    let finalSonuc = (kusurat >= 0.10) ? Math.ceil(hamSonuc) : Math.floor(hamSonuc);
     
     let formatliFinal = new Intl.NumberFormat('tr-TR').format(finalSonuc);
     document.getElementById('sonuc').innerText = formatliFinal + " kg";
