@@ -46,7 +46,8 @@
         .input-group {
             margin-bottom: 15px;
         }
-        label {
+        /* <label> yerine kullandığımız Chrome'dan gizlenen başlık stili */
+        .fake-label {
             display: block;
             margin-bottom: 5px;
             color: #1d1d1f;
@@ -122,27 +123,27 @@
 <div class="container">
     <h2>Üretim / Maliyet Hesaplayıcı</h2>
     
-    <form id="calcForm" onsubmit="event.preventDefault();" autocomplete="off">
+    <div id="calcForm">
         <div class="input-group">
-            <label for="valA">GRAMAJ (Sadece Tam Sayı)</label>
-            <input type="text" id="valA" name="veri_1" tabindex="1" inputmode="numeric" pattern="[0-9]*" placeholder="0" autocomplete="off" onfocus="this.select()">
+            <div class="fake-label">GRAMAJ (Sadece Tam Sayı)</div>
+            <input type="text" id="k1" name="q1" tabindex="1" inputmode="numeric" pattern="[0-9]*" enterkeyhint="next" autocomplete="off" spellcheck="false" onfocus="this.select()">
         </div>
         
         <div class="input-group">
-            <label for="valB">EN (Örn: 22,2 veya 222,2)</label>
-            <input type="text" id="valB" name="veri_2" tabindex="2" inputmode="decimal" pattern="[0-9.,]*" placeholder="0" autocomplete="off" onfocus="this.select()">
+            <div class="fake-label">EN (Örn: 22,2 veya 222,2)</div>
+            <input type="text" id="k2" name="q2" tabindex="2" inputmode="decimal" pattern="[0-9.,]*" enterkeyhint="next" autocomplete="off" spellcheck="false" onfocus="this.select()">
         </div>
         
         <div class="input-group">
-            <label for="valC">BOY (Örn: 22,2 veya 222,2)</label>
-            <input type="text" id="valC" name="veri_3" tabindex="3" inputmode="decimal" pattern="[0-9.,]*" placeholder="0" autocomplete="off" onfocus="this.select()">
+            <div class="fake-label">BOY (Örn: 22,2 veya 222,2)</div>
+            <input type="text" id="k3" name="q3" tabindex="3" inputmode="decimal" pattern="[0-9.,]*" enterkeyhint="next" autocomplete="off" spellcheck="false" onfocus="this.select()">
         </div>
         
         <div class="input-group">
-            <label for="valD">TABAKA (Otomatik Noktalamalı)</label>
-            <input type="text" id="valD" name="veri_4" tabindex="4" inputmode="numeric" pattern="[0-9]*" placeholder="0" autocomplete="off" onfocus="this.select()">
+            <div class="fake-label">TABAKA (Otomatik Noktalamalı)</div>
+            <input type="text" id="k4" name="q4" tabindex="4" inputmode="numeric" pattern="[0-9]*" enterkeyhint="done" autocomplete="off" spellcheck="false" onfocus="this.select()">
         </div>
-    </form>
+    </div>
     
     <div class="button-group">
         <button onclick="hesapla()" tabindex="5">Hesapla</button>
@@ -156,7 +157,8 @@
 </div>
  
 <script>
-const gramajInput = document.getElementById('valA');
+// GRAMAJ
+const gramajInput = document.getElementById('k1');
 function temizleGramaj(val) {
     let temiz = val.replace(/[^0-9]/g, '');
     if (temiz.length > 3) temiz = temiz.slice(0, 3);
@@ -173,6 +175,7 @@ gramajInput.addEventListener('paste', function(e) {
     hesapla();
 });
  
+// EN ve BOY
 function filtreleEnBoy(val) {
     let temiz = val.replace(/[.,eE+\-]/g, ',');
     temiz = temiz.replace(/[^0-9,]/g, '');
@@ -189,8 +192,8 @@ function filtreleEnBoy(val) {
     return tamKisim;
 }
 
-const enInput = document.getElementById('valB');
-const boyInput = document.getElementById('valC');
+const enInput = document.getElementById('k2');
+const boyInput = document.getElementById('k3');
 [enInput, boyInput].forEach(input => {
    input.addEventListener('input', function() { 
         this.value = filtreleEnBoy(this.value); 
@@ -204,7 +207,8 @@ const boyInput = document.getElementById('valC');
     });
 });
  
-const tabakaInput = document.getElementById('valD');
+// TABAKA
+const tabakaInput = document.getElementById('k4');
 function formatlaTabaka(val) {
     let sadeceSayi = val.replace(/[^0-9]/g, '');
     if (!sadeceSayi) return '';
@@ -221,16 +225,29 @@ tabakaInput.addEventListener('paste', function(e) {
    hesapla();
 });
  
-document.getElementById('valA').addEventListener('keydown', function(e) { if(e.key === 'Enter') { e.preventDefault(); document.getElementById('valB').focus(); } });
-document.getElementById('valB').addEventListener('keydown', function(e) { if(e.key === 'Enter') { e.preventDefault(); document.getElementById('valC').focus(); } });
-document.getElementById('valC').addEventListener('keydown', function(e) { if(e.key === 'Enter') { e.preventDefault(); document.getElementById('valD').focus(); } });
-document.getElementById('valD').addEventListener('keydown', function(e) { if(e.key === 'Enter') { e.preventDefault(); hesapla(); document.getElementById('valD').blur(); } });
+// KLAVYE ENTER / İLERİ TUŞU YÖNETİMİ
+function enterIleGec(e, hedefKutu) {
+    if(e.key === 'Enter' || e.keyCode === 13) {
+        e.preventDefault(); // Klavyenin kapanmasını engeller
+        if (hedefKutu) {
+            document.getElementById(hedefKutu).focus();
+        } else {
+            hesapla();
+            e.target.blur(); // Son kutuysa klavyeyi kapat
+        }
+    }
+}
+
+document.getElementById('k1').addEventListener('keydown', function(e) { enterIleGec(e, 'k2'); });
+document.getElementById('k2').addEventListener('keydown', function(e) { enterIleGec(e, 'k3'); });
+document.getElementById('k3').addEventListener('keydown', function(e) { enterIleGec(e, 'k4'); });
+document.getElementById('k4').addEventListener('keydown', function(e) { enterIleGec(e, null); });
  
 function hesapla() {
-    let a = parseFloat(document.getElementById('valA').value) || 0;
-    let b = parseFloat(document.getElementById('valB').value.replace(',', '.')) || 0;
-    let c = parseFloat(document.getElementById('valC').value.replace(',', '.')) || 0;
-    let d = parseFloat(document.getElementById('valD').value.replace(/\./g, '')) || 0;
+    let a = parseFloat(document.getElementById('k1').value) || 0;
+    let b = parseFloat(document.getElementById('k2').value.replace(',', '.')) || 0;
+    let c = parseFloat(document.getElementById('k3').value.replace(',', '.')) || 0;
+    let d = parseFloat(document.getElementById('k4').value.replace(/\./g, '')) || 0;
     
     let hamSonuc = (a * b * c * d) / 10000000;
     let tamKisim = Math.floor(hamSonuc);
@@ -243,10 +260,10 @@ function hesapla() {
 }
  
 function temizle() {
-    document.getElementById('valA').value = '';
-    document.getElementById('valB').value = '';
-    document.getElementById('valC').value = '';
-    document.getElementById('valD').value = '';
+    document.getElementById('k1').value = '';
+    document.getElementById('k2').value = '';
+    document.getElementById('k3').value = '';
+    document.getElementById('k4').value = '';
     document.getElementById('sonuc').innerText = '-';
 }
 </script>
