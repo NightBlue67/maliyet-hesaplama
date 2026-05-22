@@ -46,8 +46,7 @@
         .input-group {
             margin-bottom: 15px;
         }
-        /* <label> yerine kullandığımız Chrome'dan gizlenen başlık stili */
-        .fake-label {
+        label {
             display: block;
             margin-bottom: 5px;
             color: #1d1d1f;
@@ -67,6 +66,13 @@
             outline: none;
             border-color: #0071e3;
             background-color: white;
+        }
+        /* TYPE="SEARCH" KULLANACAĞIMIZ İÇİN ÇIKACAK STANDART ÇARPI İŞARETİNİ GİZLİYORUZ */
+        input[type="search"]::-webkit-search-decoration,
+        input[type="search"]::-webkit-search-cancel-button,
+        input[type="search"]::-webkit-search-results-button,
+        input[type="search"]::-webkit-search-results-decoration {
+            -webkit-appearance: none;
         }
         .button-group {
             display: flex;
@@ -123,31 +129,31 @@
 <div class="container">
     <h2>Üretim / Maliyet Hesaplayıcı</h2>
     
-    <div id="calcForm">
+    <form id="calcForm" action="javascript:void(0);" autocomplete="off">
         <div class="input-group">
-            <div class="fake-label">GRAMAJ (Sadece Tam Sayı)</div>
-            <input type="text" id="k1" name="q1" tabindex="1" inputmode="numeric" pattern="[0-9]*" enterkeyhint="next" autocomplete="off" spellcheck="false" onfocus="this.select()">
+            <label for="k1">GRAMAJ (Sadece Tam Sayı)</label>
+            <input type="search" id="k1" inputmode="numeric" pattern="[0-9]*" enterkeyhint="next" placeholder="0" autocomplete="off" onfocus="this.select()">
         </div>
         
         <div class="input-group">
-            <div class="fake-label">EN (Örn: 22,2 veya 222,2)</div>
-            <input type="text" id="k2" name="q2" tabindex="2" inputmode="decimal" pattern="[0-9.,]*" enterkeyhint="next" autocomplete="off" spellcheck="false" onfocus="this.select()">
+            <label for="k2">EN (Örn: 22,2 veya 222,2)</label>
+            <input type="search" id="k2" inputmode="decimal" pattern="[0-9.,]*" enterkeyhint="next" placeholder="0" autocomplete="off" onfocus="this.select()">
         </div>
         
         <div class="input-group">
-            <div class="fake-label">BOY (Örn: 22,2 veya 222,2)</div>
-            <input type="text" id="k3" name="q3" tabindex="3" inputmode="decimal" pattern="[0-9.,]*" enterkeyhint="next" autocomplete="off" spellcheck="false" onfocus="this.select()">
+            <label for="k3">BOY (Örn: 22,2 veya 222,2)</label>
+            <input type="search" id="k3" inputmode="decimal" pattern="[0-9.,]*" enterkeyhint="next" placeholder="0" autocomplete="off" onfocus="this.select()">
         </div>
         
         <div class="input-group">
-            <div class="fake-label">TABAKA (Otomatik Noktalamalı)</div>
-            <input type="text" id="k4" name="q4" tabindex="4" inputmode="numeric" pattern="[0-9]*" enterkeyhint="done" autocomplete="off" spellcheck="false" onfocus="this.select()">
+            <label for="k4">TABAKA (Otomatik Noktalamalı)</label>
+            <input type="search" id="k4" inputmode="numeric" pattern="[0-9]*" enterkeyhint="done" placeholder="0" autocomplete="off" onfocus="this.select()">
         </div>
-    </div>
+    </form>
     
     <div class="button-group">
-        <button onclick="hesapla()" tabindex="5">Hesapla</button>
-        <button class="clear-btn" onclick="temizle()" tabindex="6">Temizle</button>
+        <button onclick="hesapla()">Hesapla</button>
+        <button class="clear-btn" onclick="temizle()">Temizle</button>
     </div>
     
     <div class="result-box">
@@ -225,23 +231,16 @@ tabakaInput.addEventListener('paste', function(e) {
    hesapla();
 });
  
-// KLAVYE ENTER / İLERİ TUŞU YÖNETİMİ
-function enterIleGec(e, hedefKutu) {
-    if(e.key === 'Enter' || e.keyCode === 13) {
-        e.preventDefault(); // Klavyenin kapanmasını engeller
-        if (hedefKutu) {
-            document.getElementById(hedefKutu).focus();
-        } else {
-            hesapla();
-            e.target.blur(); // Son kutuysa klavyeyi kapat
-        }
+// PC İÇİN VE ENTER DESTEKLEYEN KLAVYELER İÇİN GEÇİŞ KODU
+document.getElementById('calcForm').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.keyCode === 13) {
+        e.preventDefault();
+        if (e.target.id === 'k1') document.getElementById('k2').focus();
+        else if (e.target.id === 'k2') document.getElementById('k3').focus();
+        else if (e.target.id === 'k3') document.getElementById('k4').focus();
+        else if (e.target.id === 'k4') e.target.blur(); // Son kutuda klavyeyi kapat
     }
-}
-
-document.getElementById('k1').addEventListener('keydown', function(e) { enterIleGec(e, 'k2'); });
-document.getElementById('k2').addEventListener('keydown', function(e) { enterIleGec(e, 'k3'); });
-document.getElementById('k3').addEventListener('keydown', function(e) { enterIleGec(e, 'k4'); });
-document.getElementById('k4').addEventListener('keydown', function(e) { enterIleGec(e, null); });
+});
  
 function hesapla() {
     let a = parseFloat(document.getElementById('k1').value) || 0;
@@ -267,12 +266,6 @@ function temizle() {
     document.getElementById('sonuc').innerText = '-';
 }
 </script>
- <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-      .then(() => console.log('Çevrimdışı mod aktif!'))
-      .catch((err) => console.log('Hata:', err));
-  }
-</script>
+ 
 </body>
 </html>
