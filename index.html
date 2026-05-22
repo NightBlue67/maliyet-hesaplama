@@ -157,15 +157,17 @@
                 GRAMAJ (Sadece Tam Sayı)
             </label>
             <input
-                type="text"
-                id="k1"
-                enterkeyhint="next"
-                placeholder="0"
-                autocomplete="off"
-                autocorrect="off"
-                autocapitalize="off"
-                spellcheck="false"
-                onfocus="this.select()">
+                    type="text"
+                    id="k1"
+                    inputmode="numeric"
+                    pattern="[0-9]*"
+                    enterkeyhint="next"
+                    placeholder="0"
+                    autocomplete="off"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    spellcheck="false"
+                    onfocus="this.select()">
         </div>
 
         <div class="input-group">
@@ -175,6 +177,7 @@
             <input
                 type="text"
                 id="k2"
+                inputmode="decimal"
                 enterkeyhint="next"
                 placeholder="0"
                 autocomplete="off"
@@ -191,6 +194,7 @@
             <input
                 type="text"
                 id="k3"
+                inputmode="decimal"
                 enterkeyhint="next"
                 placeholder="0"
                 autocomplete="off"
@@ -207,6 +211,8 @@
             <input
                 type="text"
                 id="k4"
+                inputmode="numeric"
+                pattern="[0-9]*"
                 enterkeyhint="done"
                 placeholder="0"
                 autocomplete="off"
