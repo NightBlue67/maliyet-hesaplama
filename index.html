@@ -148,26 +148,32 @@
         <button class="tab-btn" id="tabTabaka" onclick="setMode('tabaka')">Tabaka Bul</button>
     </div>
     
-    <form id="calcForm" onsubmit="event.preventDefault();" autocomplete="off">
+<form id="calcForm" onsubmit="event.preventDefault();" autocomplete="off">
         <div class="input-group">
             <label for="fld_a">GRAMAJ (Sadece Tam Sayı)</label>
-            <input type="text" id="fld_a" name="r_1" tabindex="1" inputmode="numeric" placeholder="0" autocomplete="off" autocorrect="off" spellcheck="false" onfocus="this.select()">
+            <input type="text" id="fld_a" name="r_1" tabindex="1" inputmode="numeric" placeholder="0" autocomplete="off" autocorrect="off" spellcheck="false" oninput="hesapla()" onfocus="this.select()">
         </div>
         
         <div class="input-group">
             <label for="fld_b">EN (Örn: 22,2)</label>
-            <input type="text" id="fld_b" name="r_2" tabindex="2" inputmode="decimal" placeholder="0" autocomplete="off" autocorrect="off" spellcheck="false" onfocus="this.select()">
+            <input type="text" id="fld_b" name="r_2" tabindex="2" inputmode="decimal" placeholder="0" autocomplete="off" autocorrect="off" spellcheck="false" oninput="hesapla()" onfocus="this.select()">
         </div>
         
         <div class="input-group">
             <label for="fld_c">BOY (Örn: 22,2)</label>
-            <input type="text" id="fld_c" name="r_3" tabindex="3" inputmode="decimal" placeholder="0" autocomplete="off" autocorrect="off" spellcheck="false" onfocus="this.select()">
+            <input type="text" id="fld_c" name="r_3" tabindex="3" inputmode="decimal" placeholder="0" autocomplete="off" autocorrect="off" spellcheck="false" oninput="hesapla()" onfocus="this.select()">
         </div>
         
         <div class="input-group">
             <label id="label_d" for="fld_d">TABAKA ADEDİ</label>
-            <input type="text" id="fld_d" name="r_4" tabindex="4" inputmode="numeric" placeholder="0" autocomplete="off" autocorrect="off" spellcheck="false" onfocus="this.select()">
+            <input type="text" id="fld_d" name="r_4" tabindex="4" inputmode="numeric" placeholder="0" autocomplete="off" autocorrect="off" spellcheck="false" oninput="hesapla()" onfocus="this.select()">
         </div>
+    </form>
+    
+    <div class="button-group">
+        <button class="action-btn" onclick="hesaplaVeKaydet()" tabindex="5">Hesapla</button>
+        <button class="clear-btn" onclick="temizleEkrani()" tabindex="6">Sil</button>
+    </div>
     </form>
     
     <div class="button-group">
