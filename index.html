@@ -124,22 +124,22 @@
     
     <div class="input-group">
         <label for="valA">GRAMAJ (Sadece Tam Sayı)</label>
-        <input type="text" id="valA" inputmode="numeric" pattern="[0-9]*" placeholder="0" onfocus="this.select()">
+        <input type="text" id="valA" inputmode="numeric" pattern="[0-9]*" placeholder="0" enterkeyhint="next" onfocus="this.select()">
     </div>
     
     <div class="input-group">
         <label for="valB">EN (Örn: 22,2 veya 222,2)</label>
-        <input type="text" id="valB" inputmode="decimal" pattern="[0-9.,]*" placeholder="0" onfocus="this.select()">
+        <input type="text" id="valB" inputmode="decimal" pattern="[0-9.,]*" placeholder="0" enterkeyhint="next" onfocus="this.select()">
     </div>
     
     <div class="input-group">
         <label for="valC">BOY (Örn: 22,2 veya 222,2)</label>
-        <input type="text" id="valC" inputmode="decimal" pattern="[0-9.,]*" placeholder="0" onfocus="this.select()">
+        <input type="text" id="valC" inputmode="decimal" pattern="[0-9.,]*" placeholder="0" enterkeyhint="next" onfocus="this.select()">
     </div>
     
     <div class="input-group">
         <label for="valD">TABAKA (Otomatik Noktalamalı)</label>
-        <input type="text" id="valD" inputmode="numeric" pattern="[0-9]*" placeholder="0" onfocus="this.select()">
+        <input type="text" id="valD" inputmode="numeric" pattern="[0-9]*" placeholder="0" enterkeyhint="done" onfocus="this.select()">
     </div>
     
     <div class="button-group">
@@ -222,11 +222,25 @@ tabakaInput.addEventListener('paste', function(e) {
    hesapla();
 });
  
-// Klavye akış yönetimi (PC ve destekleyen cihazlarda Enter tuşu işlevleri)
-document.getElementById('valA').addEventListener('keydown', function(e) { if(e.key === 'Enter') { e.preventDefault(); document.getElementById('valB').focus(); } });
-document.getElementById('valB').addEventListener('keydown', function(e) { if(e.key === 'Enter') { e.preventDefault(); document.getElementById('valC').focus(); } });
-document.getElementById('valC').addEventListener('keydown', function(e) { if(e.key === 'Enter') { e.preventDefault(); document.getElementById('valD').focus(); } });
-document.getElementById('valD').addEventListener('keydown', function(e) { if(e.key === 'Enter') { e.preventDefault(); hesapla(); document.getElementById('valD').blur(); } });
+// KLAVYE AKIŞ YÖNETİMİ: Mobil Chrome ve PC için Güçlendirilmiş Enter Yakalama
+function siradakiKutuyaGec(e, hedefId) {
+    // Hem standart 'Enter' kelimesini hem de mobil tarayıcıların gönderdiği 13 kodunu yakalar
+    if (e.key === 'Enter' || e.keyCode === 13) {
+        e.preventDefault(); // Chrome'un klavyeyi kapatmasını engeller
+        document.getElementById(hedefId).focus();
+    }
+}
+
+document.getElementById('valA').addEventListener('keydown', function(e) { siradakiKutuyaGec(e, 'valB'); });
+document.getElementById('valB').addEventListener('keydown', function(e) { siradakiKutuyaGec(e, 'valC'); });
+document.getElementById('valC').addEventListener('keydown', function(e) { siradakiKutuyaGec(e, 'valD'); });
+document.getElementById('valD').addEventListener('keydown', function(e) { 
+    if (e.key === 'Enter' || e.keyCode === 13) {
+        e.preventDefault(); 
+        hesapla(); 
+        document.getElementById('valD').blur(); // Son kutuda Enter'a basınca klavyeyi kapat
+    } 
+});
  
 function hesapla() {
     let a = parseFloat(document.getElementById('valA').value) || 0;
